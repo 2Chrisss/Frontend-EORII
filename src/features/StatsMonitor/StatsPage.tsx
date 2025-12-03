@@ -30,7 +30,7 @@ const StatsPage: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/obtenerTodo');
+        const response = await fetch('http://100.31.143.7:3000/api/obtenerTodo');
         const data = await response.json();
         
         if (data.success) {
