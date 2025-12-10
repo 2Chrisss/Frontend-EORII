@@ -9,10 +9,10 @@ interface ChargingStationTypeProps {
 export const ChargingStation: React.FC<ChargingStationTypeProps> = ({ station }) => {
   const gradId = `stationGrad-${station.id}`;
   const shadowId = `stationShadow-${station.id}`;
-  const occupied = station.status === 'occupied';
+  const occupied = station.Estado === true;
 
   return (
-    <g transform={`translate(${station.x}, ${station.y})`} aria-label={`Estación ${station.id}`}>
+    <g transform={`translate(${station.Posicion_X}, ${station.Posicion_Y})`} aria-label={`Estación ${station.id}`}>
       <defs>
         <linearGradient id={gradId} x1="0" x2="0" y1="0" y2="1">
           <stop offset="0%" stopColor={occupied ? '#ffd9a6' : '#d9f0ff'} />
@@ -40,7 +40,7 @@ export const ChargingStation: React.FC<ChargingStationTypeProps> = ({ station })
         </text>
       </g>
 
-      <title>{`Estación ${station.id} — ${station.status}`}</title>
+      <title>{`Estación ${station.id} — ${station.Estado}`}</title>
     </g>
   );
 };

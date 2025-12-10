@@ -10,8 +10,8 @@ const MAP_WIDTH = 960;
 const MAP_HEIGHT = 640;
 
 const initialStations: ChargingStationType[] = [
-    { id: 'S1', x: 920, y: 50, temperature: 22, status: 'not-occupied' },
-    { id: 'S2', x: 50, y: 550, temperature: 24, status: 'occupied' },
+    { id: 'S1', Posicion_X: 920, Posicion_Y: 50, Uso_Energia: 100, Temperatura: 22, Estado: false, Carga_Rapida: false},
+    { id: 'S2', Posicion_X: 50, Posicion_Y: 550,Uso_Energia: 100, Temperatura: 24, Estado: false, Carga_Rapida: true},
 ];
 const styles = {
   page: {
@@ -149,7 +149,7 @@ const RobotMonitor: React.FC = () => {
     </span>
   );
   const handleViewStats = () =>{
-    navigate("stats");
+    navigate("stats", { state: { fetchData: true } });
   };
   const activeCount = robots.length;
   const carryingCount = robots.filter((r) => r.Estado_Carga === true).length;

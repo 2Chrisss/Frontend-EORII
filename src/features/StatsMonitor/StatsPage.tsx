@@ -26,7 +26,6 @@ const StatsPage: React.FC = () => {
   const [robots, setRobots] = useState<RobotData[]>([]);
   const [historialBateria, setHistorialBateria] = useState<any[]>([]);
 
-  // Cargar datos desde tu API
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -34,10 +33,7 @@ const StatsPage: React.FC = () => {
         const data = await response.json();
         
         if (data.success) {
-          // Procesar datos según tu estructura
           setRobots(data.datos);
-          
-          // Generar historial para gráfica (últimos 10 registros por robot)
           const historial = procesarHistorial(data.datos);
           setHistorialBateria(historial);
         }
@@ -47,8 +43,6 @@ const StatsPage: React.FC = () => {
     };
 
     fetchData();
-    const interval = setInterval(fetchData, 5000); // Actualiza cada 5 segundos
-    return () => clearInterval(interval);
   }, []);
 
   // Función para procesar historial de batería
