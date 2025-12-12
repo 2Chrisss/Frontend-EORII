@@ -11,7 +11,7 @@ const RobotMarker: React.FC<RobotMarkerProps> = ({ robot }) => {
   const shadowId = `shadow-${robot.id}`;
 
   const baseColor =
-    robot.Estado_Carga === true ? ['#2ecc71', '#27ae60'] : ['#6ec1ff', '#2a9df4'];
+    robot.Estado_Operativo === false ? ['#2ecc71', '#27ae60'] : ['#6ec1ff', '#2a9df4'];
 
   const batteryPct = Math.max(0, Math.min(100, Number(robot.Nivel_Bateria)));
   const batteryWidth = Math.round((batteryPct / 100) * 28);

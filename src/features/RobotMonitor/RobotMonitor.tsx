@@ -10,8 +10,8 @@ const MAP_WIDTH = 960;
 const MAP_HEIGHT = 640;
 
 const initialStations: ChargingStationType[] = [
-    { id: 'S1', Posicion_X: 920, Posicion_Y: 50, Uso_Energia: 100, Temperatura: 22, Estado: false, Carga_Rapida: false},
-    { id: 'S2', Posicion_X: 50, Posicion_Y: 550,Uso_Energia: 100, Temperatura: 24, Estado: false, Carga_Rapida: true},
+    { id: 'S1', Posicion_X: 50, Posicion_Y: 50, Uso_Energia: 100, Temperatura: 22, Estado: false, Carga_Rapida: false},
+    { id: 'S2', Posicion_X: 920, Posicion_Y: 550,Uso_Energia: 100, Temperatura: 24, Estado: false, Carga_Rapida: true},
 ];
 const styles = {
   page: {
@@ -92,7 +92,7 @@ const RobotMonitor: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const ws = new WebSocket('https://darienn-zenbook.tailee72e7.ts.net/'); 
+    const ws = new WebSocket('https://zenbook.tailee72e7.ts.net/'); 
 
     ws.onopen = () => {
       console.log('Conectado al servidor');
@@ -101,15 +101,18 @@ const RobotMonitor: React.FC = () => {
 
     ws.onmessage = (evento) => {
       try {
-        const robots = JSON.parse(evento.data).data; 
-        console.log('Datos recibidos:', robots);
+        console.log(evento.data)
+        const robots = JSON.parse(evento.data).robots.data; 
+        const stations = JSON.parse(evento.data).stations.data;
+        console.log('Datos recibidos ROBOTS:', robots);
+        console.log('Datos recibidos ESTACIONES: ', stations)
 
        
         setRobots(robots);
         
-        if (robots) {
-          setChargingStations(initialStations);
-        }
+
+        setChargingStations(stations);
+        
       } catch (error) {
         console.error('Error al procesar los datos recibidos:', error);
       }
@@ -154,6 +157,8 @@ const RobotMonitor: React.FC = () => {
   const activeCount = robots.length;
   const carryingCount = robots.filter((r) => r.Estado_Carga === true).length;
   const notCarryingCount = robots.filter((r) => r.Estado_Carga === false).length;
+  const chargingCount = robots.filter((r) => r.Estado_Operativo === false).length;
+  const notChargingCount = robots.filter((r) => r.Estado_Operativo === true).length;
   const avgBattery =
     robots.length === 0
       ? 0
@@ -255,8 +260,8 @@ const RobotMonitor: React.FC = () => {
                 </div>
 
                 <div style={styles.stat}>
-                  <div style={{ fontSize: 12, color: '#666' }}>Cargando Paquete</div>
-                  <div style={{ fontSize: 20, fontWeight: 700, color: '#1f8a63' }}>{carryingCount}</div>
+                  <div style={{ fontSize: 12, color: '#666' }}>Cargando Batería</div>
+                  <div style={{ fontSize: 20, fontWeight: 700, color: '#1f8a63' }}>{chargingCount}</div>
                 </div>
 
                 <div style={styles.stat}>
@@ -312,4 +317,3 @@ const RobotMonitor: React.FC = () => {
 };
 
 export default RobotMonitor;
-// ...existing code...
