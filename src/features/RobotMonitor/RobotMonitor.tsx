@@ -350,7 +350,7 @@ const RobotMonitor: React.FC = () => {
                   >
                     {/* Encabezado del robot */}
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <div style={{ display: 'flex', alignItems: 'left'}}>
                         <span style={{ fontWeight: 700, fontSize: 14 }}>Robot {robot.id}</span>
                       </div>
                       <span 
