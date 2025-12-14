@@ -239,7 +239,7 @@ const StatsPage: React.FC = () => {
 
           <div style={styles.stat}>
             <div style={{ fontSize: 12, color: '#666', marginBottom: 4 }}>Registros</div>
-            <div style={{ fontSize: 14, fontWeight: 600, color: '#666' }}>{registrosRaw.length}</div>
+            <div style={{ fontSize: 28, fontWeight: 700, color: '#666' }}>{registrosRaw.length}</div>
           </div>
         </div>
       </div>

@@ -90,7 +90,13 @@ const RobotMonitor: React.FC = () => {
   const [chargingStations, setChargingStations] = useState<ChargingStationType[]>([]);
   const [isConnected, setIsConnected] = useState(false); 
   const navigate = useNavigate();
-
+  const zonasAlmacen = [
+    // Centradas en (200, 150), (200, 500) y (700, 320)
+    { id: 'estanteria1', x: 200 - 60, y: 150 - 60, width: 120, height: 120, tipo: 'estanteria', label: 'Estantería A' },
+    { id: 'estanteria2', x: 200 - 60, y: 500 - 60, width: 120, height: 120, tipo: 'estanteria', label: 'Estantería B' },
+    { id: 'dejada', x: 700 - 50, y: 320 - 50, width: 100, height: 100, tipo: 'dejada', label: 'Zona Descarga' },
+  ];
+  
   useEffect(() => {
     const ws = new WebSocket('https://zenbook.tailee72e7.ts.net/'); 
 
@@ -192,10 +198,88 @@ const RobotMonitor: React.FC = () => {
                 <radialGradient id="vignette" cx="50%" cy="30%">
                   <stop offset="100%" stopColor="rgba(0,0,0,0.04)" />
                 </radialGradient>
+              {/* Gradientes para las zonas */}
+                <linearGradient id="estanteriaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#8B4513" />
+                  <stop offset="100%" stopColor="#654321" />
+                </linearGradient>
+
+                <linearGradient id="dejadaGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#4CAF50" />
+                  <stop offset="100%" stopColor="#2E7D32" />
+                </linearGradient>
+
+                {/* Patrón de líneas para estanterías */}
+                <pattern id="shelfPattern" width="10" height="10" patternUnits="userSpaceOnUse">
+                  <line x1="0" y1="10" x2="10" y2="0" stroke="rgba(255,255,255,0.15)" strokeWidth="1" />
+                </pattern>
               </defs>
 
               <rect width="100%" height="100%" fill="url(#grid)" />
               <rect width="100%" height="100%" fill="url(#vignette)" />
+
+              {/* Zonas estáticas del almacén */}
+              {zonasAlmacen.map(zona => (
+                <g key={zona.id}>
+                  {/* Rectángulo principal con opacidad */}
+                  <rect
+                    x={zona.x}
+                    y={zona.y}
+                    width={zona.width}
+                    height={zona.height}
+                    rx={8}
+                    fill={zona.tipo === 'estanteria' ? 'rgba(139, 69, 19, 0.25)' : 'rgba(76, 175, 80, 0.25)'}
+                    stroke={zona.tipo === 'estanteria' ? 'rgba(139, 69, 19, 0.6)' : 'rgba(76, 175, 80, 0.6)'}
+                    strokeWidth={2}
+                    strokeDasharray={zona.tipo === 'estanteria' ? '0' : '8 4'}
+                  />
+
+                  {/* Líneas horizontales para estanterías (simular niveles) */}
+                  {zona.tipo === 'estanteria' && (
+                    <>
+                      <line 
+                        x1={zona.x + 10} 
+                        y1={zona.y + zona.height * 0.33} 
+                        x2={zona.x + zona.width - 10} 
+                        y2={zona.y + zona.height * 0.33} 
+                        stroke="rgba(139, 69, 19, 0.4)" 
+                        strokeWidth={2} 
+                      />
+                      <line 
+                        x1={zona.x + 10} 
+                        y1={zona.y + zona.height * 0.66} 
+                        x2={zona.x + zona.width - 10} 
+                        y2={zona.y + zona.height * 0.66} 
+                        stroke="rgba(139, 69, 19, 0.4)" 
+                        strokeWidth={2} 
+                      />
+                    </>
+                  )}
+
+                  {/* Icono para zona de descarga */}
+                  {zona.tipo === 'dejada' && (
+                    <g transform={`translate(${zona.x + zona.width/2}, ${zona.y + zona.height/2 - 5})`}>
+                      <polygon 
+                        points="0,-12 10,4 -10,4" 
+                        fill="rgba(76, 175, 80, 0.6)" 
+                      />
+                      <rect x={-2} y={4} width={4} height={8} fill="rgba(76, 175, 80, 0.6)" />
+                    </g>
+                  )}
+
+                  {/* Etiqueta */}
+                  <text
+                    x={zona.x + zona.width / 2}
+                    y={zona.y + zona.height + 18}
+                    textAnchor="middle"
+                    fontSize={12}
+                    fontWeight={600}
+                    fill="#555"
+                  >
+                    {zona.label}
+                  </text>
+                </g>
+              ))}
 
               {chargingStations.map(station => (
                 <ChargingStation key={station.id} station={station} />
@@ -237,58 +321,141 @@ const RobotMonitor: React.FC = () => {
               <div style={styles.legendItem}>
                 <svg width="40" height="28" viewBox="0 0 40 28">
                   <rect x="4" y="2" width="28" height="24" rx="6" fill="#d9f0ff" stroke="#444" />
-                  <circle cx="32" cy="4" r="4" fill="#7bd389" stroke="#fff" strokeWidth="1.2" />
                 </svg>
                 <div>
                   <div style={{ fontWeight: 700 }}>Estación de carga</div>
-                  <div style={styles.muted}>Ocupada / disponible</div>
                 </div>
               </div>
             </div>
           </div>
+
+          {/* Información de cada robot */}
           <div style={styles.card}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <strong>Resumen Rápido</strong>
-              <span style={{ fontSize: 13, color: '#666' }}>{robots.length} robots</span>
-            </div>
-
-            <div style={{ marginTop: 12 }}>
-              <div style={styles.statsRow}>
-                <div style={styles.stat}>
-                  <div style={{ fontSize: 12, color: '#666' }}>Activos</div>
-                  <div style={{ fontSize: 20, fontWeight: 700 }}>{activeCount}</div>
+            <strong>Estado de Robots</strong>
+            <div style={{ marginTop: 12, display: 'flex', flexDirection: 'column', gap: 12 }}>
+              {robots.length === 0 ? (
+                <div style={{ color: '#888', fontSize: 13, textAlign: 'center', padding: 20 }}>
+                  Esperando datos de robots...
                 </div>
+              ) : (
+                robots.map(robot => (
+                  <div 
+                    key={robot.id} 
+                    style={{ 
+                      padding: 12, 
+                      borderRadius: 8, 
+                      background: 'linear-gradient(180deg, #f8fafc, #fff)',
+                      border: '1px solid #e2e8f0',
+                    }}
+                  >
+                    {/* Encabezado del robot */}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <span style={{ fontSize: 18 }}>🤖</span>
+                        <span style={{ fontWeight: 700, fontSize: 14 }}>Robot {robot.id}</span>
+                      </div>
+                      <span 
+                        style={{ 
+                          padding: '2px 8px', 
+                          borderRadius: 12, 
+                          fontSize: 11, 
+                          fontWeight: 600,
+                          background: robot.Estado_Operativo ? '#d4edda' : '#fff3cd',
+                          color: robot.Estado_Operativo ? '#155724' : '#856404'
+                        }}
+                      >
+                        {robot.Estado_Operativo ? 'Operativo' : 'En carga'}
+                      </span>
+                    </div>
 
-                <div style={styles.stat}>
-                  <div style={{ fontSize: 12, color: '#666' }}>Cargando Batería</div>
-                  <div style={{ fontSize: 20, fontWeight: 700, color: '#1f8a63' }}>{chargingCount}</div>
-                </div>
+                    {/* Batería */}
+                    <div style={{ marginBottom: 8 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: '#666', marginBottom: 4 }}>
+                        <span> Batería</span>
+                        <span style={{ fontWeight: 600 }}>{robot.Nivel_Bateria ?? 0}%</span>
+                      </div>
+                      <div style={{ height: 6, background: '#e2e8f0', borderRadius: 4, overflow: 'hidden' }}>
+                        <div 
+                          style={{ 
+                            width: `${robot.Nivel_Bateria ?? 0}%`, 
+                            height: '100%', 
+                            background: (robot.Nivel_Bateria ?? 0) > 50 
+                              ? 'linear-gradient(90deg, #38d39f, #2ecc71)' 
+                              : (robot.Nivel_Bateria ?? 0) > 20 
+                                ? 'linear-gradient(90deg, #f39c12, #e67e22)' 
+                                : 'linear-gradient(90deg, #ff6b6b, #d9534f)',
+                            borderRadius: 4,
+                            transition: 'width 300ms ease'
+                          }} 
+                        />
+                      </div>
+                    </div>
 
-                <div style={styles.stat}>
-                  <div style={{ fontSize: 12, color: '#666' }}>Sin Paquete</div>
-                  <div style={{ fontSize: 20, fontWeight: 700, color: '#2a78d4' }}>{notCarryingCount}</div>
-                </div>
-              </div>
+                    {/* Posición */}
+                    <div style={{ display: 'flex', gap: 12, marginBottom: 6 }}>
+                      <div style={{ flex: 1, fontSize: 12 }}>
+                        <span style={{ color: '#666' }}>Posición: </span>
+                        <span style={{ fontWeight: 600 }}>({Math.round(robot.Posicion_X)}, {Math.round(robot.Posicion_Y)})</span>
+                      </div>
+                    </div>
 
-              <div style={{ marginTop: 12 }}>
-                <div style={{ fontSize: 12, color: '#666' }}>Batería media</div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 6 }}>
-                  <div style={{ flex: 1, height: 10, background: '#eef6ff', borderRadius: 6, overflow: 'hidden' }}>
-                    <div
-                      style={{
-                        width: `${avgBattery}%`,
-                        height: '100%',
-                        background: avgBattery > 30 ? 'linear-gradient(90deg,#9af0a0,#2ecc71)' : 'linear-gradient(90deg,#ffd1d1,#ff6b6b)',
-                        borderRadius: 6,
-                        transition: 'width 380ms ease',
-                      }}
-                    />
+                    {/* Temperaturas */}
+                    <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                      <div style={{ 
+                        flex: 1, 
+                        fontSize: 11, 
+                        padding: '4px 8px', 
+                        background: '#fff5f5', 
+                        borderRadius: 4,
+                        minWidth: 100
+                      }}>
+                        <span style={{ color: '#666' }}>Batería: </span>
+                        <span style={{ 
+                          fontWeight: 600, 
+                          color: (robot.Temperatura_Bateria ?? 0) > 60 ? '#d9534f' : '#333'
+                        }}>
+                          {robot.Temperatura_Bateria?.toFixed(1) ?? '--'}°C
+                        </span>
+                      </div>
+                      <div style={{ 
+                        flex: 1, 
+                        fontSize: 11, 
+                        padding: '4px 8px', 
+                        background: '#fff5f5', 
+                        borderRadius: 4,
+                        minWidth: 100
+                      }}>
+                        <span style={{ color: '#666' }}>Motor: </span>
+                        <span style={{ 
+                          fontWeight: 600, 
+                          color: (robot.Temperatura_Motor ?? 0) > 80 ? '#d9534f' : '#333'
+                        }}>
+                          {robot.Temperatura_Motor?.toFixed(1) ?? '--'}°C
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Estado de carga */}
+                    {robot.Estado_Carga && (
+                      <div style={{ 
+                        marginTop: 8, 
+                        fontSize: 11, 
+                        padding: '4px 8px', 
+                        background: '#e8f5e9', 
+                        borderRadius: 4,
+                        color: '#2e7d32',
+                        textAlign: 'center'
+                      }}>
+                        ⚡ Cargando batería
+                      </div>
+                    )}
                   </div>
-                  <div style={{ minWidth: 40, textAlign: 'right', fontWeight: 700 }}>{avgBattery}%</div>
-                </div>
-              </div>
+                ))
+              )}
             </div>
           </div>
+
+          
           <div style={{ marginTop: 8, display:"flex", justifyContent:"center" }}>
             <button
               type="button"

@@ -9,7 +9,7 @@ interface ChargingStationTypeProps {
 export const ChargingStation: React.FC<ChargingStationTypeProps> = ({ station }) => {
   const gradId = `stationGrad-${station.id}`;
   const shadowId = `stationShadow-${station.id}`;
-  const occupied = station.Estado === true;
+  const occupied = station.Carga_Rapida === null;
 
   return (
     <g transform={`translate(${station.Posicion_X}, ${station.Posicion_Y})`} aria-label={`Estación ${station.id}`}>
@@ -30,7 +30,6 @@ export const ChargingStation: React.FC<ChargingStationTypeProps> = ({ station })
       </g>
 
       {/* indicador de ocupación (pequeño punto) */}
-      <circle cx={18} cy={-18} r={6} fill={occupied ? '#ff6b6b' : '#7bd389'} stroke="#fff" strokeWidth={1.5} />
 
       {/* etiqueta con fondo */}
       <g transform={`translate(0, 26)`}>
