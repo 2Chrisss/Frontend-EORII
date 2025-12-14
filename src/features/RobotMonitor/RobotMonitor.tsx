@@ -434,20 +434,7 @@ const RobotMonitor: React.FC = () => {
                       </div>
                     </div>
 
-                    {/* Estado de carga */}
-                    {robot.Estado_Carga && (
-                      <div style={{ 
-                        marginTop: 8, 
-                        fontSize: 11, 
-                        padding: '4px 8px', 
-                        background: '#e8f5e9', 
-                        borderRadius: 4,
-                        color: '#2e7d32',
-                        textAlign: 'center'
-                      }}>
-                        ⚡ Cargando batería
-                      </div>
-                    )}
+                    
                   </div>
                 ))
               )}
