@@ -408,7 +408,7 @@ const RobotMonitor: React.FC = () => {
                         borderRadius: 4,
                         minWidth: 100
                       }}>
-                        <span style={{ color: '#666' }}>Batería: </span>
+                        <span style={{ color: '#666' }}>Temp. Batería: </span>
                         <span style={{ 
                           fontWeight: 600, 
                           color: (robot.Temperatura_Bateria ?? 0) > 60 ? '#d9534f' : '#333'
@@ -424,7 +424,7 @@ const RobotMonitor: React.FC = () => {
                         borderRadius: 4,
                         minWidth: 100
                       }}>
-                        <span style={{ color: '#666' }}>Motor: </span>
+                        <span style={{ color: '#666' }}>Temp. Motor: </span>
                         <span style={{ 
                           fontWeight: 600, 
                           color: (robot.Temperatura_Motor ?? 0) > 80 ? '#d9534f' : '#333'
